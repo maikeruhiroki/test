@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ボタンクリックと位置情報</title>
+</head>
+<body>
+
+<!-- ボタン生成とクリック時のイベントハンドラー -->
+<button onclick="showButtonClickInfo(1)">ボタン1</button>
+<button onclick="showButtonClickInfo(2)">ボタン2</button>
+<button onclick="showButtonClickInfo(3)">ボタン3</button>
+<button onclick="showButtonClickInfo(4)">ボタン4</button>
+<button onclick="showButtonClickInfo(5)">ボタン5</button>
+<button onclick="showButtonClickInfo(6)">ボタン6</button>
+<button onclick="showButtonClickInfo(7)">ボタン7</button>
+<button onclick="showButtonClickInfo(8)">ボタン8</button>
+<button onclick="showButtonClickInfo(9)">ボタン9</button>
+<button onclick="showButtonClickInfo(10)">ボタン10</button>
+
+<!-- クリック情報と位置情報表示エリア -->
+<div id="clickInfoList"></div>
+
+<script>
+    var clickInfoList = [];
+
+    // ボタンクリック時のイベントハンドラー
+    function showButtonClickInfo(buttonNumber) {
+        var clickTime = new Date();
+        var position = { latitude: null, longitude: null };
+
+        // 位置情報を取得
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                position.latitude = pos.coords.latitude;
+                position.longitude = pos.coords.longitude;
+
+                // ボタンクリック情報を配列に追加
+                clickInfoList.push({
+                    buttonNumber: buttonNumber,
+                    clickTime: clickTime,
+                    position: position
+                });
+
+                // ボタンクリック情報と位置情報リストを表示
+                displayClickInfoList();
+            }, function(error) {
+                console.error("位置情報の取得に失敗しました: " + error.message);
+
+                // ボタンクリック情報（位置情報なし）を配列に追加
+                clickInfoList.push({
+                    buttonNumber: buttonNumber,
+                    clickTime: clickTime,
+                    position: position
+                });
+
+                // ボタンクリック情報と位置情報リストを表示
+                displayClickInfoList();
+            });
+        } else {
+            alert("申し訳ありませんが、お使いのブラウザは位置情報をサポートしていません。");
+
+            // ボタンクリック情報（位置情報なし）を配列に追加
+            clickInfoList.push({
+                buttonNumber: buttonNumber,
+                clickTime: clickTime,
+                position: position
+            });
+
+            // ボタンクリック情報と位置情報リストを表示
+            displayClickInfoList();
+        }
+    }
+
+    // クリック情報と位置情報リスト表示
+    function displayClickInfoList() {
+        var clickInfoListElement = document.getElementById("clickInfoList");
+
+        // ボタンクリック情報と位置情報リストを表示
+        var content = "<h2>ボタンクリックと位置情報リスト</h2><ul>";
+        for (var i = 0; i < clickInfoList.length; i++) {
+            content += "<li>ボタン" + clickInfoList[i].buttonNumber +
+                "がクリックされた時間: " + clickInfoList[i].clickTime +
+                ", 位置情報: 緯度 " + clickInfoList[i].position.latitude +
+                ", 経度 " + clickInfoList[i].position.longitude + "</li>";
+        }
+        content += "</ul>";
+        clickInfoListElement.innerHTML = content;
+    }
+</script>
+
+</body>
+</html>
